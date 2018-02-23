@@ -1,0 +1,98 @@
+﻿@model HRMS.DL.Entities.tblCertificateInputFieldDetails
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>tblCertificateInputFieldDetails</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaCertificateSubTypes.CertificateName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaCertificateSubTypes.CertificateName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaColors.ColorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaColors.ColorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaFontAttributes.FontAttribute)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaFontAttributes.FontAttribute)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaFonts.FontName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaFonts.FontName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaInputFields.Field)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaInputFields.Field)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.XLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.XLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.YLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.YLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FontSize)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FontSize)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDeleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDeleted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

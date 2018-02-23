@@ -1,0 +1,639 @@
+﻿@model HRMS.DL.Helpers.CertificateViewModel
+ @{ 
+     string basePath = HttpContext.Current.Request.Url.ToString().Replace(HttpContext.Current.Request.Url.LocalPath == "/" ? "Ignore" : HttpContext.Current.Request.Url.LocalPath, "");
+ }
+<style>
+    .thumb {
+        height: 75px;
+        border: 1px solid #000;
+        margin: 10px 5px 0 0;
+    } 
+</style>
+
+<style>
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid blue;
+        border-right: 4px solid green;
+        border-left: 4px solid pink;
+        border-bottom: 4px solid red;
+        width: 30px;
+        height: 30px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+
+@@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<html lang="en">
+
+<head>
+    <!-- Bootstrap core CSS -->
+
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="~/Content/fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/Content/css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom styling plus plugins -->
+    <link href="~/Content/css/custom.css" rel="stylesheet">
+    <link href="~/Content/css/icheck/flat/green.css" rel="stylesheet">
+    <!-- editor -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+    <link href="~/Content/css/editor/external/google-code-prettify/prettify.css" rel="stylesheet">
+    <link href="~/Content/css/editor/index.css" rel="stylesheet">
+    <!-- select2 -->
+    <link href="~/Content/css/select/select2.min.css" rel="stylesheet">
+    <!-- switchery -->
+    <link rel="stylesheet" href="~/Content/css/switchery/switchery.min.css" />
+
+    <script src="~/Content/js/jquery.min.js"></script>
+
+    <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]--> 
+    <script type="text/javascript" >
+        $(document).ready(function () {
+            $('#loader').hide();
+        });
+    </script>
+</head>
+
+
+<body> 
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>@Model.CardTitle Details<small></small></h2>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            @using (Html.BeginForm("cards", "Certificates", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("FieldDetails");
+                                @Html.Hidden("CardTitle");
+
+                                <input id="baseUrl" name="id=" baseUrl"" type="text" value="@Model.baseUrl" hidden />
+                                <div class="form-horizontal form-label-left">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Template</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            @Html.DropDownList("subCertificates", null, htmlAttributes: new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <script type="text/javascript">
+                                        $(document).ready(function () {
+                                            $('#subCertificates').change(function () {
+                                                var subCertificatesTemplateUrl = $('#subCertificates').val();
+                                                $("#templateImage").attr("src", $('#baseUrl').val() + subCertificatesTemplateUrl);
+                                            });
+                                        });
+                                    </script>
+
+                                    @foreach (var item in Model.FieldDetails)
+    {
+        switch (item.tblMaInputFields.Datatype)
+        {
+            case "Employee Name":
+                                <text>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <select required class="select2_group form-control" name="@item.tblMaInputFields.UniqueId" id="@item.tblMaInputFields.UniqueId">
+                                                @{
+                    foreach (var branch in Model.tblMaCompanyBranchs)
+                    {
+                                <optgroup label="@branch.Location">
+
+                                    @{
+        var branchId = branch.Id;
+        var allBranchEmployee = Model.ApplicationUser.Where(s => s.tblMaCompanyBranchId == branchId).ToList();
+        if (allBranchEmployee != null)
+        {
+            foreach (var employee in allBranchEmployee)
+            {
+                var fullname = employee.FirstName + " " + employee.LastName;
+
+                                <option value="@fullname">@fullname</option>
+}
+}
+                                    }
+                                </optgroup>
+}
+                                                }
+
+                                            </select>
+                                        </div>
+
+
+                                    </div>
+                                </text>
+break;
+case "string":
+                                <text>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input required type="text" class="form-control" name="@item.tblMaInputFields.UniqueId" id="@item.tblMaInputFields.UniqueId">
+                                        </div>
+                                    </div>
+                                </text>
+break;
+case "Blood Group":
+                                <text>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <select required class="form-control" name="@item.tblMaInputFields.UniqueId" id="@item.tblMaInputFields.UniqueId">
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </text>
+break;
+case "Photo":
+                                <text>
+                                    <br />
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        @*<img src="~/Content/images/user.png" alt="" class="img-circle img-responsive">*@
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="file" name="@item.tblMaInputFields.UniqueId" id="@item.tblMaInputFields.UniqueId" />
+                                            <output id="list"></output>
+                                            <br />
+                                            <script>
+                                                function handleFileSelect(evt) {
+                                                    var files = evt.target.files; // FileList object
+
+                                                    // Loop through the FileList and render image files as thumbnails.
+                                                    for (var i = 0, f; f = files[i]; i++) {
+
+                                                        // Only process image files.
+                                                        if (!f.type.match('image.*')) {
+                                                            continue;
+                                                        }
+
+                                                        var reader = new FileReader();
+
+                                                        // Closure to capture the file information.
+                                                        reader.onload = (function (theFile) {
+                                                            return function (e) {
+                                                                // Render thumbnail.
+                                                                var span = document.createElement('span');
+                                                                document.getElementById('list').innerHTML = "";
+                                                                span.innerHTML = ['<img class="thumb" style="height:125px;width:125px;" src="', e.target.result,
+                                                                    '" title="', escape(theFile.name), '"/>'].join('');
+                                                                document.getElementById('list').insertBefore(span, null);
+                                                            };
+                                                        })(f);
+
+                                                        // Read in the image file as a data URL.
+                                                        reader.readAsDataURL(f);
+                                                    }
+                                                }
+
+                                                document.getElementById('Photo').addEventListener('change', handleFileSelect, false);
+                                            </script>
+                                        </div>
+                                    </div>
+                                </text>
+break;
+case "Number List":
+                                <text>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            @Html.DropDownList("CompletedYear", null, htmlAttributes: new { @class = "form-control" })
+                                        </div>
+                                        <script type="text/javascript">
+                                            $(document).ready(function () {
+                                                $('#CompletedYear').change(function () {
+                                                    var templateUrl = $('#baseUrl').val() + $('#CompletedYear').val();
+                                                    $("#templateImage").attr("src", templateUrl);
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                </text>
+break;
+case "Month Year":
+                                <text>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        <div class="col-md-4 col-sm-4 col-xs-6">
+                                            <select class="form-control" name="monthPicker" id="monthPicker">
+                                                <option selected value='Janaury'>Janaury</option>
+                                                <option value='February'>February</option>
+                                                <option value='March'>March</option>
+                                                <option value='April'>April</option>
+                                                <option value='May'>May</option>
+                                                <option value='June'>June</option>
+                                                <option value='July'>July</option>
+                                                <option value='August'>August</option>
+                                                <option value='September'>September</option>
+                                                <option value='October'>October</option>
+                                                <option value='November'>November</option>
+                                                <option value='December'>December</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1 col-sm-1"></div>
+                                        <div class="col-md-4 col-sm-4 col-xs-6">
+                                            <select class="form-control" name="yearPicker" id="yearPicker">
+                                                <option value="2018">2018</option>
+                                                <option value="2019">2019</option>
+                                                <option value="2020">2020</option>
+                                            </select>
+                                        </div>
+                                        <input required type="text" hidden name="@item.tblMaInputFields.UniqueId" id="@item.tblMaInputFields.UniqueId" />
+                                    </div>
+                                    <script type="text/javascript">
+                                        $('#monthPicker').change(function () {
+                                            setMonthYear();
+                                        });
+
+                                        $('#yearPicker').change(function () {
+                                            setMonthYear();
+                                        });
+                                        setMonthYear();
+                                        function setMonthYear() {
+                                            var month = $('#monthPicker').val();
+                                            var year = $('#yearPicker').val();
+                                            if (month != null && year != null) {
+                                                $('#CurrentMonthYear').val(month + ', ' + year);
+                                            }
+                                        }
+
+                                    </script>
+                                </text>
+break;
+case "Year":
+                                <text>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">@item.tblMaInputFields.Field</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <select required class="form-control" name="@item.tblMaInputFields.UniqueId" id="@item.tblMaInputFields.UniqueId">
+                                                <option value="2018">2018</option>
+                                                <option value="2019">2019</option>
+                                                <option value="2020">2020</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </text>
+break;
+
+
+default:
+break;
+}
+}
+                                    <br />
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Download as</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <div class="btn-group" data-toggle="buttons">
+                                                <label class="btn btn-default">
+                                                    <input type="radio" required name="DownloadFormat" value="tif" id="DownloadFormar"> .tiff
+                                                </label>
+                                                <label class="btn btn-default">
+                                                    <input type="radio" name="DownloadFormat" value="png" id="DownloadFormar"> .png
+                                                </label>
+                                                <label class="btn btn-default">
+                                                    <input type="radio" name="DownloadFormat" value="jpeg" id="DownloadFormar"> .jpeg
+                                                </label>
+                                                <label class="btn btn-default">
+                                                    <input type="radio" name="DownloadFormat" value="pdf" id="DownloadFormar"> .pdf
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+
+                                    <div class="form-group">
+                                        <div class="control-label col-md-3 col-sm-3 col-xs-12" style="height:40px">
+                                        </div>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <button type="submit" class="btn btn-primary">Download</button>
+                                            <button type="button" id="buttonPreview" class="btn btn-success">Preview</button>
+                                            <button type="button" class="btn btn-warning" disabled>Print</button>
+                                            <button type="button" id="sendMail" class="btn btn-warning" disabled>Import List</button>
+                                        </div>
+                                    </div>
+                                     
+                                    <div class="form-group">
+                                        <div class="col-md-12 col-sm-12 col-xs-12" style="height:40px">
+                                            <div id="loader" class="loader" style="margin:auto;display:block"></div>
+                                        </div>
+                                    </div>
+
+
+                                    <script type="text/javascript">
+                                        $(document).ready(function () {
+
+                                            $('#buttonPreview').click(function () {
+                                                $('#loader').show();
+                                                var EmployeeName = $('#EmployeeName').val();
+                                                var EmployeeId = $('#EmployeeId').val();
+                                                var ContactNumber = $('#ContactNumber').val();
+                                                var BloodGroup = $('#BloodGroup').val();
+                                                var CompletedYear = $('#CompletedYear').val();
+                                                var CurrentMonthYear = $('#CurrentMonthYear').val();
+                                                var Year = $('#Year').val();
+                                                var TeamProjectName = $('#TeamProjectName').val();
+                                                var TeamName = $('#TeamName').val();
+                                                var ProjectName = $('#ProjectName').val();
+
+                                                var CardTitle = $('#CardTitle').val();
+                                                var CardTemplate = $('#CardTemplate').val();
+                                                var subCertificates = $('#subCertificates').val();
+
+                                                //var formdata = new FormData($('#Photo').get(0));
+                                                //var formData = new FormData($('#excel-upload-form')[0]);
+                                                //formData.append('EmployeeName', EmployeeName); // modify
+
+                                                $.ajax({
+                                                       type: "POST",
+                                                       url: '@Url.Action("templatePreview", "Certificates")',
+                                                       data: {   EmployeeName: EmployeeName, EmployeeId:EmployeeId, ContactNumber: ContactNumber, BloodGroup: BloodGroup, CompletedYear: CompletedYear, CurrentMonthYear: CurrentMonthYear, Year: Year, TeamProjectName: TeamProjectName, TeamName: TeamName, ProjectName: ProjectName, CardTitle: CardTitle, CardTemplate:CardTemplate, subCertificates:subCertificates  },
+                                                        dataType: "json",
+                                                        success: function (recData) {
+                                                            $('#templateImage').attr('src', recData.msg);
+                                                            $('#loader').hide();
+                                                        },
+                                                        error: function (e) {
+                                                            $('#loader').hide();
+                                                        }
+                                                    });
+                                                    });
+                                                    });
+                                    </script>
+
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Preview <small></small></h2>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <div>
+                                @{
+                                    string tempLocation = basePath + Model.CardTemplate;
+                                    <text>
+                                        <img src="@tempLocation" id="templateImage" name="templateImage" style="max-height:500px;max-width:400px;display:block;margin:auto" alt="...">
+                                    </text>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page content -->
+        <!-- footer content -->
+        @*<footer>
+                <div class="">
+                    <p class="pull-right">
+                        DMI HRMS - HUMAR RESOURCE MANAGEMENT SYSTEM <a></a>. |
+                        <span class="lead"> <i class="fa fa-paw"></i> Lazy Ninja</span>
+                    </p>
+                </div>
+                <div class="clearfix"></div>
+            </footer>*@
+        <!-- /footer content -->
+    </div>
+
+    <script src="~/Content/js/bootstrap.min.js"></script>
+
+    <!-- chart js -->
+    <script src="~/Content/js/chartjs/chart.min.js"></script>
+    <!-- bootstrap progress js -->
+    <script src="~/Content/js/progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="~/Content/js/nicescroll/jquery.nicescroll.min.js"></script>
+    <!-- icheck -->
+    <script src="~/Content/js/icheck/icheck.min.js"></script>
+    <!-- tags -->
+    <script src="~/Content/js/tags/jquery.tagsinput.min.js"></script>
+    <!-- switchery -->
+    <script src="~/Content/js/switchery/switchery.min.js"></script>
+    <!-- daterangepicker -->
+    <script type="text/javascript" src="~/Content/js/moment.min2.js"></script>
+    <script type="text/javascript" src="~/Content/js/datepicker/daterangepicker.js"></script>
+    <!-- richtext editor -->
+    <script src="~/Content/js/editor/bootstrap-wysiwyg.js"></script>
+    <script src="~/Content/js/editor/external/jquery.hotkeys.js"></script>
+    <script src="~/Content/js/editor/external/google-code-prettify/prettify.js"></script>
+    <!-- select2 -->
+    <script src="~/Content/js/select/select2.full.js"></script>
+    <!-- form validation -->
+    <script type="text/javascript" src="~/Content/js/parsley/parsley.min.js"></script>
+    <!-- textarea resize -->
+    <script src="~/Content/js/textarea/autosize.min.js"></script>
+    <script>
+        autosize($('.resizable_textarea'));
+    </script>
+    <!-- Autocomplete -->
+    <script type="text/javascript" src="~/Content/js/autocomplete/countries.js"></script>
+    <script src="~/Content/js/autocomplete/jquery.autocomplete.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            'use strict';
+            var countriesArray = $.map(countries, function (value, key) {
+                return {
+                    value: value,
+                    data: key
+                };
+            });
+            // Initialize autocomplete with custom appendTo:
+            $('#autocomplete-custom-append').autocomplete({
+                lookup: countriesArray,
+                appendTo: '#autocomplete-container'
+            });
+        });
+    </script>
+    <script src="~/Content/js/custom.js"></script>
+
+
+    <!-- select2 -->
+    <script>
+        $(document).ready(function () {
+            $(".select2_single").select2({
+                placeholder: "Select a state",
+                allowClear: true
+            });
+            $(".select2_group").select2({});
+            $(".select2_multiple").select2({
+                maximumSelectionLength: 4,
+                placeholder: "With Max Selection limit 4",
+                allowClear: true
+            });
+        });
+    </script>
+    <!-- /select2 -->
+    <!-- input tags -->
+    <script>
+        function onAddTag(tag) {
+            alert("Added a tag: " + tag);
+        }
+
+        function onRemoveTag(tag) {
+            alert("Removed a tag: " + tag);
+        }
+
+        function onChangeTag(input, tag) {
+            alert("Changed a tag: " + tag);
+        }
+
+        $(function () {
+            $('#tags_1').tagsInput({
+                width: 'auto'
+            });
+        });
+    </script>
+    <!-- /input tags -->
+    <!-- form validation -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.listen('parsley:field:validate', function () {
+                validateFront();
+            });
+            $('#demo-form .btn').on('click', function () {
+                $('#demo-form').parsley().validate();
+                validateFront();
+            });
+            var validateFront = function () {
+                if (true === $('#demo-form').parsley().isValid()) {
+                    $('.bs-callout-info').removeClass('hidden');
+                    $('.bs-callout-warning').addClass('hidden');
+                } else {
+                    $('.bs-callout-info').addClass('hidden');
+                    $('.bs-callout-warning').removeClass('hidden');
+                }
+            };
+        });
+
+        $(document).ready(function () {
+            $.listen('parsley:field:validate', function () {
+                validateFront();
+            });
+            $('#demo-form2 .btn').on('click', function () {
+                $('#demo-form2').parsley().validate();
+                validateFront();
+            });
+            var validateFront = function () {
+                if (true === $('#demo-form2').parsley().isValid()) {
+                    $('.bs-callout-info').removeClass('hidden');
+                    $('.bs-callout-warning').addClass('hidden');
+                } else {
+                    $('.bs-callout-info').addClass('hidden');
+                    $('.bs-callout-warning').removeClass('hidden');
+                }
+            };
+        });
+        try {
+            hljs.initHighlightingOnLoad();
+        } catch (err) { }
+    </script>
+    <!-- /form validation -->
+    <!-- editor -->
+    <script>
+        $(document).ready(function () {
+            $('.xcxc').click(function () {
+                $('#descr').val($('#editor').html());
+            });
+        });
+
+        $(function () {
+            function initToolbarBootstrapBindings() {
+                var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
+                    'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+                    'Times New Roman', 'Verdana'],
+                    fontTarget = $('[title=Font]').siblings('.dropdown-menu');
+                $.each(fonts, function (idx, fontName) {
+                    fontTarget.append($('<li><a data-edit="fontName ' + fontName + '" style="font-family:\'' + fontName + '\'">' + fontName + '</a></li>'));
+                });
+                $('a[title]').tooltip({
+                    container: 'body'
+                });
+                $('.dropdown-menu input').click(function () {
+                    return false;
+                })
+                    .change(function () {
+                        $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');
+                    })
+                    .keydown('esc', function () {
+                        this.value = '';
+                        $(this).change();
+                    });
+
+                $('[data-role=magic-overlay]').each(function () {
+                    var overlay = $(this),
+                        target = $(overlay.data('target'));
+                    overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
+                });
+                if ("onwebkitspeechchange" in document.createElement("input")) {
+                    var editorOffset = $('#editor').offset();
+                    $('#voiceBtn').css('position', 'absolute').offset({
+                        top: editorOffset.top,
+                        left: editorOffset.left + $('#editor').innerWidth() - 35
+                    });
+                } else {
+                    $('#voiceBtn').hide();
+                }
+            };
+
+            function showErrorAlert(reason, detail) {
+                var msg = '';
+                if (reason === 'unsupported-file-type') {
+                    msg = "Unsupported format " + detail;
+                } else {
+                    console.log("error uploading file", reason, detail);
+                }
+                $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>File upload error</strong> ' + msg + ' </div>').prependTo('#alerts');
+            };
+            initToolbarBootstrapBindings();
+            $('#editor').wysiwyg({
+                fileUploadError: showErrorAlert
+            });
+            window.prettyPrint && prettyPrint();
+        });
+    </script>
+    <!-- /editor -->
+</body>
+
+</html>
+

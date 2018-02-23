@@ -1,0 +1,199 @@
+﻿@model IEnumerable<HRMS.DL.Entities.tblInterviewMaster>
+
+@{
+    ViewBag.Title = "Index";
+    bool isEven = false;
+    int i = Model==null? 0:Model.Count()+1;
+}
+
+<html lang="en">
+
+<head>
+    <!-- Bootstrap core CSS -->
+
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="~/Content/fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/Content/css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom styling plus plugins -->
+    <link href="~/Content/css/custom.css" rel="stylesheet">
+    <link href="~/Content/css/icheck/flat/green.css" rel="stylesheet">
+    <link href="~/Content/css/datatables/tools/css/dataTables.tableTools.css" rel="stylesheet">
+
+    <script src="~/Content/js/jquery.min.js"></script>
+
+    <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+</head>
+
+
+<body>
+
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>
+                        Scheduled Interview 
+                    </h3>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        @*<div class="x_title">
+                            <p>
+                                @Html.ActionLink("Schedule New Interview", "Create")
+                            </p>
+                            <div class="clearfix"></div>
+                        </div>*@
+                        <div class="x_content">
+                            <table id="example" class="table table-striped responsive-utilities jambo_table">
+                                <thead>
+                                    <tr class="headings">
+                                        <th>No.</th>
+                                        <th>Student Name </th>
+                                        <th>Technology </th>
+                                        <th>Status </th>
+                                        <th>Experience </th>
+                                        <th>Notice Period </th>
+                                        <th>Resume </th>
+                                        <th class="no-link last">
+                                            <span class="nobr">Action</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var item in Model)
+                                    {
+                                        i--;
+                                        string status = item.tblMaInterviewResult.Status;
+                                        string classEvenOdd = isEven ? "even pointer" : "odd pointer";
+
+                                        string statusClass = status == "Scheduled" ? "btn btn-default btn-xs" :
+                                            status == "In Progress" ? "btn btn-warning btn-xs" :
+                                            status == "Rejected" ? "btn btn-danger btn-xs" :
+                                            status == "Hired" ? "btn btn-success btn-xs" : "btn btn-dark btn-xs"; 
+
+                                    <tr class="@classEvenOdd">
+                                       <td>@i</td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.StudentName)
+                                        </td> 
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.tblMaInterviewTechnology.Technology)
+                                        </td>
+                                        <td>
+                                            <button type="button" class="@statusClass">@status</button>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TotalExperience)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.tblMaInterviewNoticePeriod.NoticePeriod)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Download", "DownloadResume", new { path = item.ResumePath }) 
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Details",new { id = item.Id })" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a>
+                                            <a href="@Url.Action("Edit",new { id = item.Id })" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
+                                            @*<a href="@Url.Action("Delete",new { id = item.Id })"  class="btn btn-danger btn-xs"  ><i class="fa fa-trash-o"></i> Delete </a>*@
+                                            @*<a href="#" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete </a>*@
+                                        </td>
+                                         
+                                    </tr>
+}
+
+                              
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <br />
+            </div>
+        </div> 
+    </div>
+    <!-- /page content -->
+
+    <script src="~/Content/js/bootstrap.min.js"></script>
+
+    <!-- chart js -->
+    <script src="~/Content/js/chartjs/chart.min.js"></script>
+    <!-- bootstrap progress js -->
+    <script src="~/Content/js/progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="~/Content/js/nicescroll/jquery.nicescroll.min.js"></script>
+    <!-- icheck -->
+    <script src="~/Content/js/icheck/icheck.min.js"></script>
+
+    <script src="~/Content/js/custom.js"></script>
+
+
+    <!-- Datatables -->
+    <script src="~/Content/js/datatables/js/jquery.dataTables.js"></script>
+    <script src="~/Content/js/datatables/tools/js/dataTables.tableTools.js"></script>
+    <script>
+            $(document).ready(function () {
+                $('input.tableflat').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                });
+            });
+
+            var asInitVals = new Array();
+            $(document).ready(function () {
+                var oTable = $('#example').dataTable({
+                    "oLanguage": {
+                        "sSearch": "Search all columns:"
+                    },
+                    "aoColumnDefs": [
+                        {
+                            'bSortable': false,
+                            'aTargets': [0]
+                        } //disables sorting for column one
+            ],
+                    'iDisplayLength': 12,
+                    "sPaginationType": "full_numbers",
+                    "dom": 'T<"clear">lfrtip',
+                    "tableTools": {
+                        "sSwfPath": "<?php echo base_url('assets2/js/Datatables/tools/swf/copy_csv_xls_pdf.swf'); ?>"
+                    }
+                });
+                $("tfoot input").keyup(function () {
+                    /* Filter on the column based on the index of this element's parent <th> */
+                    oTable.fnFilter(this.value, $("tfoot th").index($(this).parent()));
+                });
+                $("tfoot input").each(function (i) {
+                    asInitVals[i] = this.value;
+                });
+                $("tfoot input").focus(function () {
+                    if (this.className == "search_init") {
+                        this.className = "";
+                        this.value = "";
+                    }
+                });
+                $("tfoot input").blur(function (i) {
+                    if (this.value == "") {
+                        this.className = "search_init";
+                        this.value = asInitVals[$("tfoot input").index(this)];
+                    }
+                });
+            });
+    </script>
+</body>
+
+</html>

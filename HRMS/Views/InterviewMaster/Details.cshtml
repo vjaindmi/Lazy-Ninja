@@ -1,0 +1,579 @@
+﻿    @model HRMS.DL.Entities.tblInterviewMaster
+@using HRMS.DL.AccountModels
+@using HRMS.DL.Entities
+
+@{
+    ViewBag.Title = "Create";
+    List<tblInterviewDetails> masterDetails = new List<tblInterviewDetails>();
+    if (Model != null)
+    {
+        ApplicationDbContext db = new ApplicationDbContext();
+
+
+        masterDetails = db.tblInterviewDetails.ToList().Where(s => s.tblInterviewMasterId == this.Model.Id).ToList();
+
+        if (masterDetails.Count > 0)
+        {
+            foreach (var item in masterDetails)
+            { item.FeedbackDetails = item.tblMaInterviewFeedbackStatus.Status; }
+
+            //masterDetails.FirstOrDefault().FeedbackDetails = "Scheduled";
+            masterDetails.LastOrDefault().FeedbackDetails = Model.tblMaInterviewResult.Status;
+            if (masterDetails.LastOrDefault().FeedbackDetails == "Scheduled")
+            {
+                masterDetails.LastOrDefault().FeedbackDetails = "Interview Pending";
+            }
+        }
+    }
+
+}
+
+
+
+
+<html lang="en">
+
+<head>
+    <!-- Bootstrap core CSS -->
+
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="~/Content/fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/Content/css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom styling plus plugins -->
+    <link href="~/Content/css/custom.css" rel="stylesheet">
+    <link href="~/Content/css/icheck/flat/green.css" rel="stylesheet">
+    <!-- editor -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+    <link href="~/Content/css/editor/external/google-code-prettify/prettify.css" rel="stylesheet">
+    <link href="~/Content/css/editor/index.css" rel="stylesheet">
+    <!-- select2 -->
+    <link href="~/Content/css/select/select2.min.css" rel="stylesheet">
+    <!-- switchery -->
+    <link rel="stylesheet" href="~/Content/css/switchery/switchery.min.css" />
+
+    <script src="~/Content/js/jquery.min.js"></script>
+
+    <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600'>
+        <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'>*@
+
+    <style>
+       
+        .day-number {
+            font-size: 4em;
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .date-right {
+            display: inline-block;
+        }
+
+        .day-name {
+            font-size: 1.6em;
+        }
+
+        .month {
+            text-transform: uppercase;
+            font-weight: 300;
+            font-size: 0.6em;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        .timeline ul {
+            padding: 1.5em 0 0.1em 2em;
+            margin: 0;
+            list-style: none;
+            position: relative;
+        }
+            .timeline ul li {
+                margin: 0 0 15px;
+            }
+            .timeline ul::before {
+                content: ' ';
+                height: 100%;
+                width: 2px;
+                background-color: #d9d9d9;
+                position: absolute;
+                top: 0;
+                left: 37px;
+                z-index: 3;
+            }
+
+        
+        .timeline li div {
+            display: inline-block;
+            margin: 5px 0.5em;
+            vertical-align: top;
+        }
+
+        .timeline .bullet {
+            width: 2em;
+            height: 2em;
+            box-sizing: border-box;
+            border-radius: 50%;
+            background: #fff;
+            z-index: 55;
+            margin-right: 1em;
+            position:relative;
+        }
+
+            .timeline .bullet.Scheduled {
+                border: 2px solid #33cc33;
+            }
+            .timeline .bullet.InProgress {
+                border: 2px solid #ff9900;
+            }
+            .timeline .bullet.Rejected {
+                border: 2px solid #ff0000;
+            }
+            .timeline .bullet.Selected {
+                border: 2px solid #009900;
+            }
+            .timeline .bullet.OnHold {
+                border: 2px solid #660033;
+            }
+
+
+        .timeline .time {
+            width: 20%;
+            font-size: 1em;
+            padding-top: 0.0em;
+        }
+
+        .timeline .desc {
+            width: 50%;
+        }
+
+        .timeline h3 {
+            font-size: 1em;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .timeline h4 {
+            margin: 0;
+            font-size: 0.9em;
+            font-weight: 400;
+            color: #808080;
+        }
+
+        .timeline .people img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .credits, .video {
+            position: absolute;
+            bottom: 10px;
+            color: #808080;
+            font-size: 100%;
+            text-decoration: underline;
+        }
+
+        .credits {
+            left: 10px;
+        }
+
+        .video {
+            right: 10px;
+        }
+        .glyphicon {
+            position: relative;
+            top: 1px;
+            display: inline-block;
+            font-family: 'Glyphicons Halflings';
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            font-size: 24px;
+            background: #fff;
+            z-index: 555;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .InProgress {
+            color: #f9a50c;
+        }
+        .Rejected {
+            color: #f53434;
+        }
+        .Selected {
+            color: #09b909;
+        }
+        .Scheduled {
+            color: #c5c5c5;
+        }
+    </style>
+</head>
+
+
+<body>
+    @using (Html.BeginForm("Create", "InterviewMaster", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <!-- page content -->
+        <div class="right_col" role="main">
+
+            <div class="">
+
+                <div class="clearfix"></div>
+
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2>
+                                    Interview Details
+                                    &nbsp;&nbsp; <a href="@Url.Action("Index")" class="btn btn-primary"> Back To List </a>
+                                </h2>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content form-horizontal form-label-left">
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Student Name :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.StudentName</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Technology :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.tblMaInterviewTechnology.Technology</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Scheduled On :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.ScheduledDateTime.ToShortDateString()</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Email :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.EmailId</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Phone Number :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.PhoneNumber</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Notice Period :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.NoticePeriod</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Experience :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.TotalExperience</label>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Current Location :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.CurrentLocation</label>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Current CTC :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.CurrentCTC</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Expcted CTC :</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <label class="control-label">@Model.ExpectedCTC</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2>Interview Rounds Timeline<small></small></h2>
+                                <div class="clearfix form-horizontal form-label-left"></div>
+                            </div>
+                            <div class="x_content form-horizontal form-label-left">
+
+
+                                <div class="timeline">
+                                    <ul>
+                                        <li>
+                                            <span class="Scheduled glyphicon glyphicon-record" aria-hidden="true"></span>
+
+                                            <div class="time">@Model.ScheduledDateTime.ToShortDateString()</div>
+                                            <div class="desc">
+                                                <h3>Scheduled</h3>
+                                                <h4>@Model.ApplicationUser.FirstName &nbsp; @Model.ApplicationUser.LastName </h4>
+                                            </div>
+                                        </li>
+                                       
+                                            @foreach (var item in masterDetails)
+                                            {
+                                                string bulletClassName = item.FeedbackDetails == "Scheduled" ? "Scheduled glyphicon glyphicon-record" :
+                                                    item.FeedbackDetails == "In Progress" ? "InProgress glyphicon glyphicon-record" :
+                                                    item.FeedbackDetails == "Rejected" ? "Rejected glyphicon glyphicon-record" :
+                                                    item.FeedbackDetails == "Hired" ? "Selected glyphicon glyphicon-record" :
+                                                    item.FeedbackDetails == "Good" ? "Selected glyphicon glyphicon-record" :
+                                                    item.FeedbackDetails == "Medium" ? "InProgress glyphicon glyphicon-record" :
+                                                    item.FeedbackDetails == "Poor" ? "Rejected glyphicon glyphicon-record" :
+                                                    "OnHold glyphicon glyphicon-record";
+
+                                        <li>
+                                             <span class="@bulletClassName" aria-hidden="true"></span> 
+                                            
+                                            <div class="time">@item.ScheduleDateTime.ToShortDateString()</div>
+                                            <div class="desc">
+                                                <h3>@item.FeedbackDetails</h3>
+                                                <h4>@item.ApplicationUser.FirstName &nbsp; @item.ApplicationUser.LastName </h4>
+                                            </div>
+                                        </li>
+                                            }
+                                         
+                                    </ul>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+    <script src="~/Content/js/bootstrap.min.js"></script>
+
+    <!-- chart js -->
+    <script src="~/Content/js/chartjs/chart.min.js"></script>
+    <!-- bootstrap progress js -->
+    <script src="~/Content/js/progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="~/Content/js/nicescroll/jquery.nicescroll.min.js"></script>
+    <!-- icheck -->
+    <script src="~/Content/js/icheck/icheck.min.js"></script>
+    <!-- tags -->
+    <script src="~/Content/js/tags/jquery.tagsinput.min.js"></script>
+    <!-- switchery -->
+    <script src="~/Content/js/switchery/switchery.min.js"></script>
+    <!-- daterangepicker -->
+    <script type="text/javascript" src="~/Content/js/moment.min2.js"></script>
+    <script type="text/javascript" src="~/Content/js/datepicker/daterangepicker.js"></script>
+    <!-- richtext editor -->
+    <script src="~/Content/js/editor/bootstrap-wysiwyg.js"></script>
+    <script src="~/Content/js/editor/external/jquery.hotkeys.js"></script>
+    <script src="~/Content/js/editor/external/google-code-prettify/prettify.js"></script>
+    <!-- select2 -->
+    <script src="~/Content/js/select/select2.full.js"></script>
+    <!-- form validation -->
+    <script type="text/javascript" src="~/Content/js/parsley/parsley.min.js"></script>
+    <!-- textarea resize -->
+    <script src="~/Content/js/textarea/autosize.min.js"></script>
+    <script>
+        autosize($('.resizable_textarea'));
+    </script>
+    <!-- Autocomplete -->
+    <script type="text/javascript" src="~/Content/js/autocomplete/countries.js"></script>
+    <script src="~/Content/js/autocomplete/jquery.autocomplete.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            'use strict';
+            var countriesArray = $.map(countries, function (value, key) {
+                return {
+                    value: value,
+                    data: key
+                };
+            });
+            // Initialize autocomplete with custom appendTo:
+            $('#autocomplete-custom-append').autocomplete({
+                lookup: countriesArray,
+                appendTo: '#autocomplete-container'
+            });
+        });
+    </script>
+    <script src="~/Content/js/custom.js"></script>
+
+
+    <!-- select2 -->
+    <script>
+        $(document).ready(function () {
+            $(".select2_single").select2({
+                placeholder: "Select a state",
+                allowClear: true
+            });
+            $(".select2_group").select2({});
+            $(".select2_multiple").select2({
+                maximumSelectionLength: 4,
+                placeholder: "With Max Selection limit 4",
+                allowClear: true
+            });
+        });
+    </script>
+    <!-- /select2 -->
+    <!-- input tags -->
+    <script>
+        function onAddTag(tag) {
+            alert("Added a tag: " + tag);
+        }
+
+        function onRemoveTag(tag) {
+            alert("Removed a tag: " + tag);
+        }
+
+        function onChangeTag(input, tag) {
+            alert("Changed a tag: " + tag);
+        }
+
+        $(function () {
+            $('#OtherTechnology').tagsInput({
+                width: 'auto'
+            });
+        });
+    </script>
+    <!-- /input tags -->
+    <!-- form validation -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.listen('parsley:field:validate', function () {
+                validateFront();
+            });
+            $('#demo-form .btn').on('click', function () {
+                $('#demo-form').parsley().validate();
+                validateFront();
+            });
+            var validateFront = function () {
+                if (true === $('#demo-form').parsley().isValid()) {
+                    $('.bs-callout-info').removeClass('hidden');
+                    $('.bs-callout-warning').addClass('hidden');
+                } else {
+                    $('.bs-callout-info').addClass('hidden');
+                    $('.bs-callout-warning').removeClass('hidden');
+                }
+            };
+        });
+
+        $(document).ready(function () {
+            $.listen('parsley:field:validate', function () {
+                validateFront();
+            });
+            $('#demo-form2 .btn').on('click', function () {
+                $('#demo-form2').parsley().validate();
+                validateFront();
+            });
+            var validateFront = function () {
+                if (true === $('#demo-form2').parsley().isValid()) {
+                    $('.bs-callout-info').removeClass('hidden');
+                    $('.bs-callout-warning').addClass('hidden');
+                } else {
+                    $('.bs-callout-info').addClass('hidden');
+                    $('.bs-callout-warning').removeClass('hidden');
+                }
+            };
+        });
+        try {
+            hljs.initHighlightingOnLoad();
+        } catch (err) { }
+    </script>
+    <!-- /form validation -->
+    <!-- editor -->
+    <script>
+        $(document).ready(function () {
+            $('.xcxc').click(function () {
+                $('#descr').val($('#editor').html());
+            });
+        });
+
+        $(function () {
+            function initToolbarBootstrapBindings() {
+                var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
+                    'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+                    'Times New Roman', 'Verdana'],
+                    fontTarget = $('[title=Font]').siblings('.dropdown-menu');
+                $.each(fonts, function (idx, fontName) {
+                    fontTarget.append($('<li><a data-edit="fontName ' + fontName + '" style="font-family:\'' + fontName + '\'">' + fontName + '</a></li>'));
+                });
+                $('a[title]').tooltip({
+                    container: 'body'
+                });
+                $('.dropdown-menu input').click(function () {
+                    return false;
+                })
+                    .change(function () {
+                        $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');
+                    })
+                    .keydown('esc', function () {
+                        this.value = '';
+                        $(this).change();
+                    });
+
+                $('[data-role=magic-overlay]').each(function () {
+                    var overlay = $(this),
+                        target = $(overlay.data('target'));
+                    overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
+                });
+                if ("onwebkitspeechchange" in document.createElement("input")) {
+                    var editorOffset = $('#editor').offset();
+                    $('#voiceBtn').css('position', 'absolute').offset({
+                        top: editorOffset.top,
+                        left: editorOffset.left + $('#editor').innerWidth() - 35
+                    });
+                } else {
+                    $('#voiceBtn').hide();
+                }
+            };
+
+            function showErrorAlert(reason, detail) {
+                var msg = '';
+                if (reason === 'unsupported-file-type') {
+                    msg = "Unsupported format " + detail;
+                } else {
+                    console.log("error uploading file", reason, detail);
+                }
+                $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>File upload error</strong> ' + msg + ' </div>').prependTo('#alerts');
+            };
+            initToolbarBootstrapBindings();
+            $('#editor').wysiwyg({
+                fileUploadError: showErrorAlert
+            });
+            window.prettyPrint && prettyPrint();
+        });
+    </script>
+    <!-- /editor -->
+</body>
+
+</html>
+
+ 

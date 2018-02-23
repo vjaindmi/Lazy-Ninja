@@ -1,0 +1,90 @@
+﻿@model IEnumerable<HRMS.DL.Entities.tblCertificateInputFieldDetails>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>Index</h2>
+ 
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.tblMaCertificateSubTypes.CertificateName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tblMaInputFields.Field)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tblMaFieldAlignmentId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tblMaColors.ColorName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tblMaFontAttributes.FontAttribute)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tblMaFonts.FontName)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.XLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.YLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FontSize)
+        </th>
+        <th>
+            Is Done
+        </th>
+
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @item.tblMaCertificateSubTypes.tblMaCertificateTypes.CertificateName &nbsp;
+            @Html.DisplayFor(modelItem => item.tblMaCertificateSubTypes.CertificateName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tblMaInputFields.Field)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tblMaFieldAlignmentId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tblMaColors.ColorName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tblMaFontAttributes.FontAttribute)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tblMaFonts.FontName)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.XLocation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.YLocation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FontSize)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsDeleted)
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+        </td>
+    </tr>
+}
+
+</table>

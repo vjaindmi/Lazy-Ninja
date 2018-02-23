@@ -1,0 +1,213 @@
+﻿@using Microsoft.AspNet.Identity
+@using HRMS.DL.AccountModels;
+@using HRMS.DL.Entities;
+
+@{
+    string userName = "Sushmita Roychaudhari";
+    string userLocation = "Pune";
+    string basePath = HttpContext.Current.Request.Url.ToString().Replace(HttpContext.Current.Request.Url.LocalPath == "/" ? "Ignore" : HttpContext.Current.Request.Url.LocalPath, "");
+    string userPic = "/Content/images/SRC.png";
+    List<tblMaNotifications> notifications = new List<tblMaNotifications>();
+    if (Request.IsAuthenticated)
+    {
+        userName = User.Identity.GetUserName();
+
+        using (ApplicationDbContext db = new ApplicationDbContext())
+        {
+            string userId = User.Identity.GetUserId();
+            var userData = db.Users.Where(s => s.Id.Equals(userId)).FirstOrDefault();
+            if (userData != null)
+            {
+                userName = string.Format("{0} {1}", userData.FirstName, userData.LastName);
+                userPic = userData.ImagePath;
+                if (userData.tblMaCompanyBranch != null)
+                {
+                    userLocation = userData.tblMaCompanyBranch.Location;
+                }
+            }
+            notifications = db.tblMaNotifications.Where(s=>s.UserId==userId).Where(s=>!s.IsOpened).ToList();
+        }
+    }
+    userPic = basePath + userPic;
+}
+
+<!-- top navigation -->
+<div class="top_nav">
+    <div class="nav_menu">
+        <nav class="" role="navigation">
+            <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+
+                <li class="pull-left" style="margin:auto;display:block">
+                    <p class="pull-left" style="margin:auto;display:block;text-align: center;margin: 0 auto;margin-top: 15px;">
+                        DMI HRMS - HUMAR RESOURCE MANAGEMENT SYSTEM  BY
+                        @*<span class="lead">
+                Lazy Ninja
+            </span>*@
+                    </p>
+                    &nbsp;&nbsp;&nbsp; <img height="50" width="150" src="~/Content/images/LazyNinja_logo_new_512.png" />
+                </li>
+
+                <li class="">
+                    <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <img src="@userPic" alt="">@userName
+                        <span class=" fa fa-angle-down"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
+                        @*<li>
+                                <a href="javascript:;">  Profile</a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">
+                                    <span class="badge bg-red pull-right">50%</span>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">Help</a>
+                            </li>*@
+
+                        <li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                <a href="~/Account/LogOff"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                            }
+                            else
+                            {
+                                <a href="~/Account/Login">Log in</a>
+                            }
+                        </li>
+                    </ul>
+                </li>
+                <li role="presentation" class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-envelope-o"></i>
+                        <span class="badge bg-green">@notifications.Count()</span>
+                    </a>
+                    <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
+                        @foreach (var item in notifications.Take(3))
+                                    {
+                                        var result = (DateTime.Now - item.DateTime);
+                                        string duration = "";
+
+                                        double durationInDay = Convert.ToInt64( result.TotalDays);
+                                        duration = durationInDay.ToString() + " days ago" ;
+                                        if (durationInDay <= 0)
+                                        {
+                                            double durationInHr = Convert.ToInt64(result.TotalHours);
+                                            duration = durationInHr.ToString() + " hours ago";
+                                            if (durationInHr <= 0)
+                                            {
+                                                double durationInMin = Convert.ToInt64(result.TotalMinutes);
+                                                duration = durationInMin.ToString() + " minutes ago";
+                                                if (durationInMin <= 0)
+                                                {
+                                                    double durationInSec = Convert.ToInt64(result.TotalSeconds);
+                                                    duration = durationInSec.ToString() + " seconds ago";
+                                                }
+                                            }
+                                        }
+
+                             <li>
+                            <a href="@Url.Action("SubmitFeedback","InterviewMaster")" >
+                                <span class="image">
+                                    <img src="@userPic" alt="Profile Image" />
+                                </span>
+                                <span>
+                                    <span>@item.SenderName</span>
+                                    <span class="time">@duration</span>
+                                </span>
+                                <span class="message">
+                                   @item.Details
+                                </span>
+                            </a>
+                        </li>
+                        }
+                            @if (notifications.Count == 0)
+                            {
+                            <li>
+                            <a>
+                                <span class="image">
+                                    <img src="@userPic" alt="Profile Image" />
+                                </span>
+                                <span>
+                                    <span>@userName</span> 
+                                </span>
+                                <span class="message">
+                                   You dont have any notification
+                                </span>
+                            </a>
+                        </li>
+                        }
+                        @if (notifications.Count > 3)
+                        {
+                            <li>
+                            <div class="text-center">
+                                <a>
+                                    <strong><a href="@Url.Action("SubmitFeedback","InterviewMaster")">See All Alerts</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                        }
+
+                        @*<li>
+                            <a>
+                                <span class="image">
+                                    <img src="~/Content/images/img.jpg" alt="Profile Image" />
+                                </span>
+                                <span>
+                                    <span>John Smith</span>
+                                    <span class="time">3 mins ago</span>
+                                </span>
+                                <span class="message">
+                                    Film festivals used to be do-or-die moments for movie makers. They were where...
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <span class="image">
+                                    <img src="~/Content/images/img.jpg" alt="Profile Image" />
+                                </span>
+                                <span>
+                                    <span>John Smith</span>
+                                    <span class="time">3 mins ago</span>
+                                </span>
+                                <span class="message">
+                                    Film festivals used to be do-or-die moments for movie makers. They were where...
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <span class="image">
+                                    <img src="~/Content/images/img.jpg" alt="Profile Image" />
+                                </span>
+                                <span>
+                                    <span>John Smith</span>
+                                    <span class="time">3 mins ago</span>
+                                </span>
+                                <span class="message">
+                                    Film festivals used to be do-or-die moments for movie makers. They were where...
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="text-center">
+                                <a>
+                                    <strong><a href="inbox.html">See All Alerts</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>*@
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<!-- /top navigation -->

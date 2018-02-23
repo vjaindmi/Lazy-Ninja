@@ -1,0 +1,41 @@
+﻿
+@{
+    string success = TempData["Y"] == null ?"": TempData["Y"].ToString();
+    string danger = TempData["N"] == null ? "" : TempData["N"].ToString();
+    string warning = TempData["W"] == null ? "" : TempData["W"].ToString(); 
+}
+<div class="x_content bs-example-popovers">
+    @if (!string.IsNullOrEmpty(success))
+    {
+        <div class="alert alert-success alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Success:</strong> @success
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(warning))
+    {
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Warning:</strong> @warning
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(danger))
+    {
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Error:</strong> @danger
+        </div>
+    }
+
+
+
+
+</div>

@@ -1,0 +1,285 @@
+﻿@using Microsoft.AspNet.Identity
+@using HRMS.DL.AccountModels;
+@using Microsoft.AspNet.Identity;
+@using Microsoft.AspNet.Identity.EntityFramework;
+
+<style>
+    .not-active {
+        pointer-events: none;
+        cursor: no-drop;
+        opacity: 0.5;
+    }
+</style>
+@{
+    string userName = "Sushmita Roychaudhari";
+    string userLocation = "Pune";
+    string basePath = HttpContext.Current.Request.Url.ToString().Replace(HttpContext.Current.Request.Url.LocalPath == "/" ? "Ignore" : HttpContext.Current.Request.Url.LocalPath, "");
+    string userPic = "/Content/images/SRC.png";
+    string UserRole = "HR";
+    if (Request.IsAuthenticated)
+    {
+        userName = User.Identity.GetUserName();
+        using (ApplicationDbContext db = new ApplicationDbContext())
+        {
+            string userId = User.Identity.GetUserId();
+            var store = new UserStore<ApplicationUser>(db);
+            var manager = new UserManager<ApplicationUser>(store);
+            UserRole = manager.GetRoles(userId).FirstOrDefault();
+
+            var userData = db.Users.Where(s => s.Id.Equals(userId)).FirstOrDefault();
+            if (userData != null)
+            {
+                userName = string.Format("{0} {1}", userData.FirstName, userData.LastName);
+                userPic = userData.ImagePath;
+                if (userData.tblMaCompanyBranch != null)
+                {
+                    userLocation = userData.tblMaCompanyBranch.Location;
+                }
+            }
+        }
+    }
+    userPic = basePath + userPic;
+}
+<div class="col-md-3 left_col">
+    <div class="left_col scroll-view">
+        <div class="navbar nav_title" style="border: 0;">
+            <a href="~/Home/index" class="site_title"><i class="fa fa-paw"></i> <span>HRMS</span></a>
+        </div>
+        <div class="clearfix"></div>
+        <!-- menu prile quick info -->
+        <div class="profile">
+            <div class="profile_pic">
+                <img src="@userPic" alt="..." class="img-circle profile_img">
+            </div>
+            <div class="profile_info">
+                <span>Welcome,</span>
+                <h2>@userName</h2>
+            </div>
+        </div>
+        <!-- /menu prile quick info -->
+        <br />
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+                <h3>@userLocation</h3>
+                <ul class="nav side-menu">
+
+                    <li>
+                        <a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="~/Template/Dashboard">Dashboard</a></li>
+                            <li><a href="~/Home/EmployeeList">Employee List</a></li> 
+                        </ul>
+                    </li>
+
+                    @if (UserRole == "HR")
+                    {
+                    <li>
+                        <a><i class="fa fa-file"></i>   Certificates<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="~/Certificates/YearCompletionCertificates">Year Completion Certificates</a></li>
+                            <li><a href="~/Certificates/SpotAwards">Spot Awards</a></li>
+                            <li><a href="~/Certificates/QuarterlyAwards">Quarterly Awards</a></li>
+                            <li><a href="~/Certificates/AnnualAwards">Annual Awards</a></li>
+                            <li><a href="~/Certificates/WhateverItTakesAward">Whatever It Takes Award</a></li>
+                            <li> <a href="~/Certificates/IDCards">ID Cards</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-envelope-o"></i>   Wishes Mail<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li> <a href="~/Certificates/BirthdayMail">Birthday Mail</a></li>
+                            <li><a href="~/Certificates/NewBornBabyMail" class="not-active">New Born Baby Mail</a></li>
+                            <li><a href="~/Certificates/WeddingMail" class="not-active">Wedding Mail</a></li>
+                            <li><a href="~/Template/index" class="not-active">Promotion Mail</a></li>
+                            <li><a href="~/Template/index" class="not-active">Welcome Aboard Mail</a></li>
+                        </ul>
+                    </li>
+                    }
+
+                    <li>
+                        <a><i class="fa fa-users"></i>   Interview Master<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            @if (UserRole == "HR")
+                            {
+                        <li> <a href="~/InterviewMaster/Create">Schedule New Interview</a></li>
+                        <li> <a href="~/InterviewMaster/Index">Scheduled Interview Status</a></li>
+                            }
+                        <li> <a href="~/InterviewMaster/SubmitFeedback">Submit Interview Feedback</a></li>
+                        </ul>
+                    </li>
+
+                    @if (UserRole == "HR")
+                    {
+                    <li>
+                        <a><i class="fa fa-graduation-cap"></i>     Letters<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li> <a href="~/Template/index" class="not-active">Appointment Letter</a></li>
+                            <li> <a href="~/Template/index" class="not-active">Releiving Letter</a></li>
+                            <li> <a href="~/Template/index" class="not-active">Experience Letter</a></li>
+                            <li><a href="~/Template/index" class="not-active">Promotion Letter</a></li>
+                        </ul>
+                    </li>
+                    }
+
+
+
+
+
+                    @*<li>
+                            <a><i class="fa fa-edit"></i> Forms <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu" style="display: none">
+                                <li>
+                                    <a href="~/Template/form">General Form</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/form_advanced">Advanced Components</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/form_validation">Form Validation</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/form_wizards">Form Wizard</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/form_upload">Form Upload</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/form_buttons">Form Buttons</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a><i class="fa fa-desktop"></i> UI Elements <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu" style="display: none">
+                                <li>
+                                    <a href="~/Template/general_elements">General Elements</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/media_gallery">Media Gallery</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/typography">Typography</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/icons">Icons</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/glyphicons">Glyphicons</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/widgets">Widgets</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/invoice">Invoice</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/inbox">Inbox</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/calendar">Calender</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a><i class="fa fa-table"></i> Tables <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu" style="display: none">
+                                <li>
+                                    <a href="~/Template/tables">Tables</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/tables_dynamic">Table Dynamic</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a><i class="fa fa-bar-chart-o"></i> Data Presentation <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu" style="display: none">
+                                <li>
+                                    <a href="~/Template/chartjs">Chart JS</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/chartjs2">Chart JS2</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/morisjs">Moris JS</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/echarts">ECharts </a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/other_charts">Other Charts </a>
+                                </li>
+                            </ul>
+                        </li>*@
+                </ul>
+            </div>
+            @*<div class="menu_section">
+                    <h3>Live On</h3>
+                    <ul class="nav side-menu">
+                        <li>
+                            <a><i class="fa fa-bug"></i> Additional Pages <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu" style="display: none">
+                                <li>
+                                    <a href="~/Template/e_commerce">E-commerce</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/projects">Projects</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/project_detail">Project Detail</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/contacts">Contacts</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/profile">Profile</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a><i class="fa fa-windows"></i> Extras <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu" style="display: none">
+                                <li>
+                                    <a href="~/Template/page_404">404 Error</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/page_500">500 Error</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/plain_page">Plain Page</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/login">Login Page</a>
+                                </li>
+                                <li>
+                                    <a href="~/Template/pricing_tables">Pricing Tables</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a><i class="fa fa-laptop"></i> Landing Page <span class="label label-success pull-right">Coming Soon</span></a>
+                        </li>
+                    </ul>
+                </div>*@
+        </div>
+        <!-- /sidebar menu -->
+        <!-- /menu footer buttons -->
+        @*<div class="sidebar-footer hidden-small">
+            <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Logout">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </a>
+        </div>*@
+        <!-- /menu footer buttons -->
+    </div>
+</div>

@@ -1,0 +1,104 @@
+﻿@model HRMS.DL.Entities.tblCertificateInputFieldDetails
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>tblCertificateInputFieldDetails</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaCertificateSubTypes.CertificateName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaCertificateSubTypes.CertificateName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaColors.ColorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaColors.ColorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaFontAttributes.FontAttribute)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaFontAttributes.FontAttribute)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaFonts.FontName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaFonts.FontName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tblMaInputFields.Field)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tblMaInputFields.Field)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.XLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.XLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.YLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.YLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FontSize)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FontSize)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDeleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDeleted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
